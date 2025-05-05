@@ -1,9 +1,18 @@
+:root {
+  --font-primary: 1.5rem 'Poppins', sans-serif;
+}
+
 .calculator {
   width: 100vw;
   max-width: 400px;
   height: 600px;
   background-color: var(--color-brand-darkest);
   border-radius: 48px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
   box-shadow: 
     0px 4px 4px 0px rgba(0, 0, 0, 0.25), 
     0px 188px 52px 0px rgba(0, 0, 0, 0.01), 
@@ -15,9 +24,34 @@
     0px -4px 5px 0px rgba(0, 0, 0, 0.22) inset;
 }
 
+header {
+  display: grid;
+  color: var(--color-text-primary);
+  grid-template-columns: 1fr;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32px 48px;  
+  font: var(--font-primary);
+
+  & > div:nth-child(1) {
+    color: var(--color-text-secondary);
+    justify-self: end;
+  }
+
+  & #result {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 64px;
+    font-size: 3rem;
+  }
+}
+
 .buttons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  justify-items: center;
   gap: 12px;
   padding: 32px;
 }
@@ -26,24 +60,40 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  border: none;
+  border: 1px solid transparent;
   
   background: linear-gradient(
     180deg, rgba(0, 0, 0, 0.05) 0%, 
     rgba(255, 255, 255, 0.05) 100%), 
     var(--color-brand-darkest);
   box-shadow: 
-  0px 11px 7px 0px rgba(0, 0, 0, 0.01), 
-  0px 7px 7px 0px rgba(0, 0, 0, 0.04), 
-  0px 4px 6px 0px rgba(0, 0, 0, 0.10), 
-  0px 2px 4px 0px rgba(0, 0, 0, 0.26), 
-  0px 0px 2px 0px rgba(0, 0, 0, 0.29), 
-  0px 2px 3px 0px rgba(255, 255, 255, 0.06) inset;
+    0px 11px 7px 0px rgba(0, 0, 0, 0.01), 
+    0px 7px 7px 0px rgba(0, 0, 0, 0.04), 
+    0px 4px 6px 0px rgba(0, 0, 0, 0.10), 
+    0px 2px 4px 0px rgba(0, 0, 0, 0.26), 
+    0px 0px 2px 0px rgba(0, 0, 0, 0.29), 
+    0px 2px 3px 0px rgba(255, 255, 255, 0.06) inset;
   
-  font: 1.5rem 'Poppins', sans-serif;
+  font: var(--font-primary);
   color: var(--color-text-primary);
 
   cursor: pointer;
+  transition: all 0.1s ease-in-out;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  &:active {
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    box-shadow: 
+      0px 2px 4px 0px rgba(0, 0, 0, 0.01), 
+      0px 2px 4px 0px rgba(0, 0, 0, 0.04), 
+      0px 2px 3px 0px rgba(255, 255, 255, 0.06) inset;
+    transform: translateY(2px);
+    transition: all 0s ease-in-out;
+  }
 }
 
 .accent0 {
@@ -51,7 +101,23 @@
 }
 .accent1 {
   background-color: var(--color-shape-accent-1);
+
+  &:hover {
+    background: var(--color-brand-dark);
+  }
+
+  &:active {
+    background: #46287895;
+  }
 }
 .accent2 {
   background-color: var(--color-shape-accent-2);
+
+  &:hover {
+    background: #DF4D2FEE;
+  }
+
+  &:active {
+    background: #DF4D2FDD;
+  }
 }
