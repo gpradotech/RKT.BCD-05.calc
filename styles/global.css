@@ -1,3 +1,10 @@
 html {
   background-color: var(--color-brand-light);
 }
+
+main {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  padding: 24px;
+}
