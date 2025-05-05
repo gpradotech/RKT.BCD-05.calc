@@ -153,6 +153,19 @@ function compute() {
     default: return;
   }
 
+  // Converte para string e remove ponto/virgula para contar apenas os dígitos
+  const resultStr = result.toString().replace(".", "").replace(",", "").replace("-", "");
+  if (resultStr.length > 8 || result === "Erro") {
+    currentInput = "Erro";
+    operator = "";
+    previousInput = "";
+    updateDisplay();
+    updateOperatorDisplay("");
+    calc.textContent = ".";
+    return;
+  }
+
+  // Atualiza histórico com operação completa
   const symbol = { "+": "+", "-": "−", "*": "×", "/": "÷" }[operator];
   calc.textContent = `${formatDisplayNumber(previousInput)} ${symbol} ${formatDisplayNumber(currentInput)} =`;
 
@@ -161,9 +174,9 @@ function compute() {
   previousInput = "";
   updateDisplay();
   updateOperatorDisplay("");
-
-  resultadoExibido = true; // Marca que mostrou resultado
+  resultadoExibido = true;
 }
+
 
 
 equals.onclick = () => compute();

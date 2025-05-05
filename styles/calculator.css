@@ -45,7 +45,10 @@ header {
     align-items: center;
     width: 100%;
     height: 64px;
-    font-size: 3rem;
+    font-size: clamp(1rem, 5vw, 3rem);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: right;
   }
 }
 
