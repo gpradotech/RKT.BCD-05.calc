@@ -1,5 +1,6 @@
 // display
 const resultNumber = document.getElementById("resultNumber");
+const displayOperator = document.getElementById("displayOperator");
 const calc = document.getElementById("calc");
 
 // numbers
@@ -33,22 +34,44 @@ const clear = document.getElementById("clear");
 let currentInput = "";       // Número que está sendo digitado
 let previousInput = "";      // Número armazenado antes de escolher o operador
 let operator = "";           // Operador atual (+, -, etc.)
+let resultadoExibido = false; // Indica se acabou de mostrar um resultado
 
 
 //////////////////////////////////////////////////////////////////
 // 2. Função para atualizar o visor da calculadora
 function updateDisplay() {
-  resultNumber.textContent = currentInput || "0"; // Mostra o número atual ou 0 se estiver vazio
+  if (currentInput === "" || currentInput === "Erro") {
+    resultNumber.textContent = currentInput || "0";
+  } else {
+    // Remove excesso de caracteres, mas formata com separadores
+    let toDisplay = currentInput.slice(0, 16); // maior limite porque inclui pontos/virgulas
+    resultNumber.textContent = formatDisplayNumber(toDisplay);
+  }
 }
 
 
 ///////////////////////////////////////////////////////
 // 3. Função para lidar com clique nos números
 function appendNumber(number) {
-  if (number === "." && currentInput.includes(".")) return; // Impede múltiplos pontos
-  currentInput += number; // Adiciona o número ao valor atual
+  // Se acabou de mostrar o resultado, reinicia o cálculo
+  if (resultadoExibido) {
+    currentInput = "";
+    previousInput = "";
+    operator = "";
+    calc.textContent = ".";
+    updateOperatorDisplay("");
+    resultadoExibido = false;
+  }
+
+  if (number === "." && currentInput.includes(".")) return;
+
+  const plainDigits = currentInput.replace(".", "");
+  if (plainDigits.length >= 8) return;
+
+  currentInput += number;
   updateDisplay();
 }
+
 
 zero.onclick = () => appendNumber("0");
 one.onclick = () => appendNumber("1");
@@ -66,13 +89,46 @@ decimal.onclick = () => appendNumber(".");
 //////////////////////////////////////////////////////////////////
 // 4. Função para escolher o operador
 function chooseOperator(op) {
-  if (currentInput === "") return; // Ignora se não houver número
-  if (previousInput !== "") {
-    compute(); // Faz o cálculo se já havia um número e operador anterior
+  // Se o resultado foi exibido, queremos continuar usando ele
+  if (resultadoExibido) {
+    previousInput = currentInput;
+    currentInput = "";
+    resultadoExibido = false;
   }
+
+  if (currentInput === "" && previousInput !== "") {
+    operator = op;
+    updateOperatorDisplay(op);
+    updateHistoryDisplay(previousInput, operator);
+    return;
+  }
+
+  if (currentInput === "") return;
+
+  if (previousInput !== "") {
+    compute();
+    previousInput = currentInput;
+    currentInput = "";
+  } else {
+    previousInput = currentInput;
+    currentInput = "";
+  }
+
   operator = op;
-  previousInput = currentInput;
-  currentInput = "";
+  updateOperatorDisplay(op);
+  updateHistoryDisplay(previousInput, operator);
+}
+
+
+function updateOperatorDisplay(op) {
+  const symbolMap = {
+    "+": "+",
+    "-": "−",
+    "*": "×",
+    "/": "÷"
+  };
+
+  displayOperator.textContent = symbolMap[op] || "";
 }
 
 add.onclick = () => chooseOperator("+");
@@ -90,27 +146,25 @@ function compute() {
 
   let result = 0;
   switch (operator) {
-    case "+":
-      result = prev + current;
-      break;
-    case "-":
-      result = prev - current;
-      break;
-    case "*":
-      result = prev * current;
-      break;
-    case "/":
-      result = current !== 0 ? prev / current : "Erro";
-      break;
-    default:
-      return;
+    case "+": result = prev + current; break;
+    case "-": result = prev - current; break;
+    case "*": result = prev * current; break;
+    case "/": result = current !== 0 ? prev / current : "Erro"; break;
+    default: return;
   }
+
+  const symbol = { "+": "+", "-": "−", "*": "×", "/": "÷" }[operator];
+  calc.textContent = `${formatDisplayNumber(previousInput)} ${symbol} ${formatDisplayNumber(currentInput)} =`;
 
   currentInput = result.toString();
   operator = "";
   previousInput = "";
   updateDisplay();
+  updateOperatorDisplay("");
+
+  resultadoExibido = true; // Marca que mostrou resultado
 }
+
 
 equals.onclick = () => compute();
 
@@ -121,7 +175,10 @@ clear.onclick = () => {
   previousInput = "";
   operator = "";
   updateDisplay();
+  updateOperatorDisplay("");
+  calc.textContent = "."; // limpa histórico
 };
+
 
 backspace.onclick = () => {
   currentInput = currentInput.slice(0, -1);
@@ -136,3 +193,81 @@ percent.onclick = () => {
   currentInput = (parseFloat(currentInput) / 100).toString();
   updateDisplay();
 };
+
+//////////////////////////////////////////////////////////////////
+// 8. Criar função utilitária para formatar o número
+function formatDisplayNumber(value) {
+  const [integerPart, decimalPart] = value.split(".");
+
+  // Formata parte inteira com separador de milhar
+  const formattedInteger = parseInt(integerPart, 10)
+    .toLocaleString("pt-BR"); // Usa formatação brasileira
+
+  // Se houver parte decimal, adiciona com vírgula
+  return decimalPart ? `${formattedInteger},${decimalPart}` : formattedInteger;
+}
+
+//////////////////////////////////////////////////////////////////
+// 9. Criar função updateHistoryDisplay()
+function updateHistoryDisplay(prev, op) {
+  const symbolMap = {
+    "+": "+",
+    "-": "−",
+    "*": "×",
+    "/": "÷"
+  };
+
+  // Mostra o número anterior + operador
+  calc.textContent = `${formatDisplayNumber(prev)} ${symbolMap[op] || ""}`;
+}
+
+//////////////////////////////////////////////////////////////////
+// 10. Controlar a calculadora com o teclado
+document.addEventListener("keydown", handleKeyboardInput);
+
+function handleKeyboardInput(event) {
+  const key = event.key;
+
+  // Se for número
+  if (!isNaN(key)) {
+    appendNumber(key);
+    return;
+  }
+
+  // Ponto ou vírgula
+  if (key === "." || key === ",") {
+    appendNumber(".");
+    return;
+  }
+
+  // Operadores
+  if (key === "+" || key === "-" || key === "*" || key === "/") {
+    chooseOperator(key);
+    return;
+  }
+
+  // Igual ou Enter
+  if (key === "=" || key === "Enter") {
+    event.preventDefault(); // evita submit se for em form
+    compute();
+    return;
+  }
+
+  // Limpar tudo
+  if (key === "Escape" || key === "Delete") {
+    clear.click();
+    return;
+  }
+
+  // Apagar último
+  if (key === "Backspace") {
+    backspace.click();
+    return;
+  }
+
+  // Porcentagem
+  if (key === "%") {
+    percent.click();
+    return;
+  }
+}

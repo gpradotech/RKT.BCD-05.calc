@@ -32,6 +32,7 @@ header {
   align-items: center;
   padding: 32px 48px;  
   font: var(--font-primary);
+  overflow: hidden;
 
   & > div:nth-child(1) {
     color: var(--color-text-secondary);
@@ -57,6 +58,10 @@ header {
 }
 
 .btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   width: 64px;
   height: 64px;
   border-radius: 50%;
