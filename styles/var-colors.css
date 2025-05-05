@@ -1,0 +1,26 @@
+:root {
+  /* brand */
+  --color-brand-light: #807ECE;
+  --color-brand-mid: #975DFA;
+  --color-brand-dark: #462878;
+  --color-brand-darkest: #2D2A37;
+
+  /* accent colors */
+  --color-accent: #E25F45;
+
+
+  /* base */
+  --color-base-100: #EBEBEB;
+  --color-base-200: #6B6B6B;
+
+
+  /* text */
+  --color-text-primary: var(--color-base-100);
+  --color-text-secondary: var(--color-base-200);
+  
+  
+  /* colors to elements tokens */
+  --color-shape-default: var(--color-brand-darkest);
+  --color-shape-accent-1: var(--color-brand-dark);
+  --color-shape-accent-2: var(--color-accent);
+}
