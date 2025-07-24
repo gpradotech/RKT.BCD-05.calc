@@ -55,7 +55,7 @@ header {
 .buttons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  justify-items: center;
+  place-items: center;
   gap: 12px;
   padding: 32px;
 }
@@ -127,5 +127,12 @@ header {
 
   &:active {
     background: #DF4D2FDD;
+  }
+}
+
+@media (max-width:430px) {
+  .calculator, .buttons {
+    transform: scale(.8);
+    padding: 0;
   }
 }
